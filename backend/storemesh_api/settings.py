@@ -37,9 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
+    'shop',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -75,8 +80,12 @@ WSGI_APPLICATION = 'storemesh_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'storemesh_db',      # ชื่อฐานข้อมูลที่ตั้งไว้ใน docker-compose
+        'USER': 'admin',            # Username ที่ตั้งไว้ใน docker-compose
+        'PASSWORD': 'password',      # Password ที่ตั้งไว้ใน docker-compose
+        'HOST': 'db',               # สำคัญมาก: ต้องตรงกับชื่อ service ของตู้ db ใน docker-compose
+        'PORT': '5432',             # Port มาตรฐานของ PostgreSQL
     }
 }
 
@@ -117,7 +126,27 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# อนุญาตให้ Frontend (Vite) เข้าถึง API ได้
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.0:5173",
+]
+
+# ตั้งค่าให้ REST Framework ใช้ JWT เป็นตัวตรวจสอบสิทธิ์
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+# กำหนด Custom User Model ของแอป shop
+AUTH_USER_MODEL = 'shop.User'
