@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # ตู้ที่ 1: ฐานข้อมูล PostgreSQL
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: storemesh_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # ตู้ที่ 2: Django Backend
+  backend:
+    build: ./backend
+    # สั่งรันเซิร์ฟเวอร์ Django ผูกกับ Port 8000
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      # ส่งค่า Environment ไปให้ Django ต่อ Database ได้ถูกต้อง
+      - DB_HOST=db
+      - DB_NAME=storemesh_db
+      - DB_USER=admin
+      - DB_PASSWORD=password
+
+  # ตู้ที่ 3: React Frontend (Vite)
+  frontend:
+    build: ./frontend
+    # สั่งรัน Vite โดยเปิด Host ให้เข้าถึงได้จากภายนอก Container
+    command: npm run dev -- --host 0.0.0.0
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173" # Port เริ่มต้นของ Vite
+    depends_on:
+      - backend
+
+volumes:
+  # สร้างพื้นที่เก็บข้อมูล เพื่อไม่ให้ข้อมูลหายตอนปิด Container
+  postgres_data:

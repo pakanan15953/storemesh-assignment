@@ -1,0 +1,82 @@
+# =========================================================================
+# Root / General
+# =========================================================================
+# OS Files
+.DS_Store
+Thumbs.db
+db.doc
+Desktop.ini
+
+# IDEs and Editors
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.patch
+
+# Containers & Local Development
+.docker/
+docker-compose.override.yml
+
+# Environment Files
+.env
+.env.local
+.env.*.local
+
+
+# =========================================================================
+# Backend (Django / Python)
+# =========================================================================
+# Python bytecode & cache
+backend/__pycache__/
+backend/**/*.py[cod]
+backend/**/*$py.class
+
+# Python Virtual Environments
+backend/venv/
+backend/.venv/
+backend/env/
+backend/ENV/
+backend/env.bak/
+backend/venv.bak/
+
+# Django local database & static/media files
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/staticfiles/
+backend/media/
+
+# Backend logs & env
+backend/*.log
+backend/.env
+
+
+# =========================================================================
+# Frontend (React / Vite / TypeScript)
+# =========================================================================
+# Node dependencies
+frontend/node_modules/
+
+# Production builds
+frontend/dist/
+frontend/dist-ssr/
+frontend/build/
+
+# Logs
+frontend/logs/
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# Frontend local env files
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/.eslintcache
