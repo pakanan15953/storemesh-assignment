@@ -119,6 +119,21 @@ class ProductAPITests(APITestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_delete_product_owner(self):
+        self.client.force_authenticate(user=self.seller)
+        url = reverse('product-detail', kwargs={'pk': self.product.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Product.objects.filter(id=self.product.id).exists())
+
+    def test_delete_product_non_owner_forbidden(self):
+        another_seller = User.objects.create_user(username='seller2', email='s2@ex.com', password='password123', role='SELLER')
+        self.client.force_authenticate(user=another_seller)
+        url = reverse('product-detail', kwargs={'pk': self.product.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Product.objects.filter(id=self.product.id).exists())
+
 
 class CartAPITests(APITestCase):
     def setUp(self):
@@ -241,3 +256,35 @@ class OrderCheckoutTests(APITestCase):
 
         # Cart is NOT cleared
         self.assertEqual(cart.items.count(), 2)
+
+    def test_list_orders_buyer(self):
+        order = Order.objects.create(buyer=self.buyer, total_price=150.00, status='COMPLETED')
+        OrderItem.objects.create(order=order, product=self.product1, quantity=1, unit_price=100.00)
+        OrderItem.objects.create(order=order, product=self.product2, quantity=1, unit_price=50.00)
+
+        another_buyer = User.objects.create_user(username='buyer2', email='b2@ex.com', password='password123', role='BUYER')
+        another_order = Order.objects.create(buyer=another_buyer, total_price=100.00, status='COMPLETED')
+        OrderItem.objects.create(order=another_order, product=self.product1, quantity=1, unit_price=100.00)
+
+        self.client.force_authenticate(user=self.buyer)
+        url = reverse('order-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['id'], order.id)
+
+    def test_list_orders_seller(self):
+        order = Order.objects.create(buyer=self.buyer, total_price=100.00, status='COMPLETED')
+        OrderItem.objects.create(order=order, product=self.product1, quantity=1, unit_price=100.00)
+
+        another_seller = User.objects.create_user(username='seller2', email='s2@ex.com', password='password123', role='SELLER')
+        product3 = Product.objects.create(seller=another_seller, title='Item C', price=20.00, quantity=5)
+        another_order = Order.objects.create(buyer=self.buyer, total_price=20.00, status='COMPLETED')
+        OrderItem.objects.create(order=another_order, product=product3, quantity=1, unit_price=20.00)
+
+        self.client.force_authenticate(user=self.seller)
+        url = reverse('order-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['id'], order.id)

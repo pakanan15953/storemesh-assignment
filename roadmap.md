@@ -55,3 +55,12 @@
 - [x] ตรวจสอบความสมบูรณ์และทดสอบการรันระบบทั้งหมดผ่าน `docker-compose up --build`
 - [x] เขียนคู่มือการติดตั้งและการรันระบบใน [README.md](file:///c:/Users/gluee/storemesh-assignment/README.md) ของโปรเจกต์
 
+---
+
+### 🟢 Phase 5: ระบบ CI/CD Pipeline และการเพิ่มเคสทดสอบ (CI/CD Pipeline & Additional Unit Tests) — [เสร็จสิ้น]
+- [x] เพิ่ม Unit Tests สำหรับการลบสินค้า (Delete Product) และการกรองประวัติคำสั่งซื้อ (Order History)
+- [x] ปรับแต่งค่าความปลอดภัยและการเชื่อมต่อฐานข้อมูลใน `settings.py` ให้รองรับ Environment Variables
+- [x] ติดตั้งและกำหนดค่าระบบ CI/CD Pipeline ด้วย GitHub Actions (`.github/workflows/ci.yml`)
+- [x] ทดสอบรันการทำงานผ่าน Pipeline ให้สำเร็จสมบูรณ์ (Backend Tests, Frontend Lint & Build checks)
+
+

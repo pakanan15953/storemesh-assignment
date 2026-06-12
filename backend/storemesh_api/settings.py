@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -81,11 +82,11 @@ WSGI_APPLICATION = 'storemesh_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'storemesh_db',      # ชื่อฐานข้อมูลที่ตั้งไว้ใน docker-compose
-        'USER': 'admin',            # Username ที่ตั้งไว้ใน docker-compose
-        'PASSWORD': 'password',      # Password ที่ตั้งไว้ใน docker-compose
-        'HOST': 'db',               # สำคัญมาก: ต้องตรงกับชื่อ service ของตู้ db ใน docker-compose
-        'PORT': '5432',             # Port มาตรฐานของ PostgreSQL
+        'NAME': os.environ.get('DB_NAME', 'storemesh_db'),
+        'USER': os.environ.get('DB_USER', 'admin'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'password'),
+        'HOST': os.environ.get('DB_HOST', 'db'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
