@@ -8,6 +8,9 @@
 
 การออกแบบฐานข้อมูลนี้คำนึงถึง **Database Integrity** และความถูกต้องตาม Business Flow ของระบบ E-commerce โดยแบ่งออกเป็น 6 ตารางหลัก ดังนี้:
 
+### 📸 แผนภาพ Entity-Relationship (ER Diagram)
+![ER Diagram](./ER%20Diagram.png)
+
 ### 1. โค้ดความสัมพันธ์สำหรับนำไปใช้ใน [dbdiagram.io](https://dbdiagram.io)
 คุณสามารถคัดลอกโค้ด DBML ด้านล่างนี้ไปวางในกล่องข้อความฝั่งซ้ายของเว็บ dbdiagram.io เพื่อสร้างแผนภาพความสัมพันธ์ (ER Diagram) ได้โดยอัตโนมัติ:
 
