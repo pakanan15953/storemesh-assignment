@@ -116,6 +116,15 @@ docker-compose up --build
 * **Backend:** [http://localhost:8000](http://localhost:8000) (หน้า Django REST Framework API)
 * **Database:** `localhost:5432` (PostgreSQL)
 
+#### 🗄️ การเชื่อมต่อฐานข้อมูลผ่านเครื่องมือภายนอก (Navicat, DBeaver, pgAdmin)
+คุณสามารถใช้เครื่องมือ GUI สำหรับจัดการฐานข้อมูลเชื่อมต่อเข้ามาที่ PostgreSQL Container ได้โดยตรงผ่านการตั้งค่าดังนี้:
+* **Connection Type / DBMS:** `PostgreSQL`
+* **Host / IP Address:** `localhost` (หรือ `127.0.0.1`)
+* **Port:** `5432`
+* **Database Name:** `storemesh_db`
+* **Username / Role:** `admin`
+* **Password:** `password`
+
 ---
 
 ### 2. การสร้างตารางและการนำเข้าข้อมูลทดสอบ (Migration & Seeding Database)
