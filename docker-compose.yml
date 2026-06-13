@@ -16,11 +16,8 @@ services:
   # ตู้ที่ 2: Django Backend
   backend:
     build: ./backend
-    # สั่งรัน migrate และ seed ข้อมูลอัตโนมัติเมื่อเปิดตู้ จากนั้นรันเซิร์ฟเวอร์ Django
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py seed_db &&
-             python manage.py runserver 0.0.0.0:8000"
+    # รอให้ PostgreSQL เปิดพอร์ตพร้อมใช้งานก่อน ค่อยเริ่ม migrate, seed และรันเซิร์ฟเวอร์
+    command: sh -c "python -c \"import socket, time; port = 5432; host = 'db'; print('Waiting for database...'); [time.sleep(1) for _ in range(30) if socket.socket().connect_ex((host, port)) != 0]\" && python manage.py migrate && python manage.py seed_db && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
     ports:
