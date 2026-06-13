@@ -21,7 +21,7 @@ const getImageUrl = (url: string | null | undefined) => {
   let cleanUrl = url
   try {
     cleanUrl = decodeURIComponent(url)
-  } catch (e) {
+  } catch {
     // fallback
   }
 
@@ -61,7 +61,7 @@ const getImageUrl = (url: string | null | undefined) => {
   try {
     const urlObj = new URL(API_BASE_URL)
     host = `${urlObj.protocol}//${urlObj.host}`
-  } catch (e) {
+  } catch {
     // fallback
   }
 

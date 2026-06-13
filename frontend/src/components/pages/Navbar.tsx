@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from "@/components/ui/button"
-import { ShoppingCart, User as UserIcon, LogOut } from "lucide-react"
+import { ShoppingCart, LogOut } from "lucide-react"
 import type { User } from "../../types"
 
 interface NavbarProps {
