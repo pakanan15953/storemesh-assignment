@@ -225,6 +225,10 @@ export const SellerProducts: React.FC<SellerProductsProps> = ({
                     src={imagePreview}
                     alt="Preview"
                     className="h-full w-full object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500'
+                    }}
                   />
                   <div className="absolute inset-0 bg-neutral-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <Button

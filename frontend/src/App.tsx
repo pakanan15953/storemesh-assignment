@@ -16,14 +16,36 @@ const getImageUrl = (url: string | null | undefined) => {
   if (!url) {
     return 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500'
   }
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url
+
+  // Handle case where Django ImageField prefixes seeded external URLs with /media/ (e.g. /media/https://...)
+  let cleanUrl = url
+  if (url.includes('http://') || url.includes('https://')) {
+    const httpIndex = url.indexOf('http://')
+    const httpsIndex = url.indexOf('https://')
+    if (httpIndex !== -1 && (httpsIndex === -1 || httpIndex < httpsIndex)) {
+      cleanUrl = url.substring(httpIndex)
+    } else if (httpsIndex !== -1) {
+      cleanUrl = url.substring(httpsIndex)
+    }
   }
-  const host = 'http://localhost:8000'
-  if (url.startsWith('/')) {
-    return `${host}${url}`
+
+  if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+    return cleanUrl
   }
-  return `${host}/${url}`
+
+  // Determine host dynamically from API_BASE_URL to avoid hardcoding localhost
+  let host = 'http://localhost:8000'
+  try {
+    const urlObj = new URL(API_BASE_URL)
+    host = `${urlObj.protocol}//${urlObj.host}`
+  } catch (e) {
+    // fallback
+  }
+
+  if (cleanUrl.startsWith('/')) {
+    return `${host}${cleanUrl}`
+  }
+  return `${host}/${cleanUrl}`
 }
 
 function App() {

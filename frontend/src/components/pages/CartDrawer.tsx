@@ -51,7 +51,15 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             {cart.items.map((item) => (
               <div key={item.id} className="flex items-center gap-4 py-4 first:pt-0">
                 <div className="w-16 h-16 bg-neutral-100 rounded-md overflow-hidden flex-shrink-0">
-                  <img src={getImageUrl(item.product.image)} className="w-full h-full object-cover" alt={item.product.title} />
+                  <img
+                    src={getImageUrl(item.product.image)}
+                    className="w-full h-full object-cover"
+                    alt={item.product.title}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500'
+                    }}
+                  />
                 </div>
 
                 <div className="flex-grow min-w-0">
