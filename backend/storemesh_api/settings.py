@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'shop',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -142,11 +143,19 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.0:5173",
 ]
 
-# ตั้งค่าให้ REST Framework ใช้ JWT เป็นตัวตรวจสอบสิทธิ์
+# ตั้งค่าให้ REST Framework ใช้ JWT เป็นตัวตรวจสอบสิทธิ์ และใช้ drf-spectacular สำหรับ OpenAPI Schema
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'StoreMesh API Documentation',
+    'DESCRIPTION': 'API endpoints specification for StoreMesh StoreFront Management System.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 # กำหนด Custom User Model ของแอป shop

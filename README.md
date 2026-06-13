@@ -112,6 +112,7 @@ Table order_items {
 ### Prerequisites
 * ติดตั้ง **Docker Desktop** ในเครื่องคอมพิวเตอร์ของคุณให้เรียบร้อย
 * **สำคัญ:** ตรวจสอบให้มั่นใจว่าโปรแกรม **Docker Desktop** เปิดทำงานอยู่ก่อนเริ่มรันคำสั่งด้านล่าง
+* คัดลอกไฟล์ **.env.example** เป็น **.env** ที่ระดับนอกสุดของโปรเจกต์ เพื่อตั้งค่ารหัสผ่านฐานข้อมูลและตัวแปรต่างๆ
 
 ### 1. Run Services with Docker Compose
 รันคำสั่งด้านล่างนี้เพื่อดาวน์โหลด อิมเมจ และเริ่มทำงานเซิร์ฟเวอร์ทั้งหมด (Database, Backend, Frontend):
@@ -121,6 +122,7 @@ docker-compose up --build
 ระบบจะเปิดพอร์ตการใช้งานดังนี้:
 * **Frontend:** [http://localhost:5173](http://localhost:5173) (หน้าเว็บ React App)
 * **Backend:** [http://localhost:8000](http://localhost:8000) (หน้า Django REST Framework API)
+* **API Documentation (Swagger UI):** [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/) (คู่มืออธิบายและทดลองเรียกใช้ API ทั้งหมด)
 * **Database:** `localhost:5432` (PostgreSQL)
 
 #### Connection via GUI Client (DBeaver, Navicat, pgAdmin)
