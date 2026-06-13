@@ -1,18 +1,18 @@
 # StoreMesh Assignment - E-commerce System
 
-ระบบจัดการร้านค้าออนไลน์ (E-commerce) ที่พัฒนาด้วยสถาปัตยกรรมแบบแยกส่วน (Decoupled Architecture) โดยใช้ Django REST Framework เป็น Backend API, React (Vite) เป็น Frontend และใช้ PostgreSQL เป็นฐานข้อมูลหลัก ทั้งหมดรันอยู่บน Docker Container
+ระบบ Storefront Management System พัฒนาด้วยสถาปัตยกรรมแบบแยกส่วน (Decoupled Architecture) โดยแบ่งออกเป็น Django REST Framework (Backend API), React with TypeScript (Frontend) และใช้ PostgreSQL เป็นฐานข้อมูลหลัก ทั้งหมดควบคุมการทำงานด้วย Docker Container
 
 ---
 
-## 📊 การออกแบบฐานข้อมูล (Database Design / ER Diagram)
+## Database Design
 
-การออกแบบฐานข้อมูลนี้คำนึงถึง **Database Integrity** และความถูกต้องตาม Business Flow ของระบบ E-commerce โดยแบ่งออกเป็น 6 ตารางหลัก ดังนี้:
+การออกแบบ Database Schema นี้เน้นเรื่อง Database Integrity และการไหลของข้อมูลให้ถูกต้องตามระบบ E-commerce โดยแบ่งตารางหลักออกเป็น 6 ตาราง:
 
-### 📸 แผนภาพ Entity-Relationship (ER Diagram)
+### ER Diagram
 ![ER Diagram](./ER%20Diagram.png)
 
-### 1. โค้ดความสัมพันธ์สำหรับนำไปใช้ใน [dbdiagram.io](https://dbdiagram.io)
-คุณสามารถคัดลอกโค้ด DBML ด้านล่างนี้ไปวางในกล่องข้อความฝั่งซ้ายของเว็บ dbdiagram.io เพื่อสร้างแผนภาพความสัมพันธ์ (ER Diagram) ได้โดยอัตโนมัติ:
+### DBML (Database Markup Language) for dbdiagram.io
+คัดลอกโค้ด DBML ด้านล่างไปใช้ใน [dbdiagram.io](https://dbdiagram.io) เพื่อดู ER Diagram แบบ Interactive ได้:
 
 ```dbml
 // Copy this code into dbdiagram.io to generate the ER Diagram
@@ -70,35 +70,35 @@ Table order_items {
 
 ---
 
-### 2. คำอธิบายโครงสร้างฐานข้อมูลและความสัมพันธ์
+### Database Schema Explanation
 
 #### 👤 ระบบผู้ใช้งานและสินค้า (Authentication & Product Listing)
 * **`users` (ข้อมูลผู้ใช้งาน)**
   * เก็บข้อมูลพื้นฐาน ได้แก่ Username, Email, Password
-  * มีฟิลด์ `role` เพื่อแยกประเภทผู้ใช้ระหว่าง **`SELLER`** (ผู้ขาย) และ **`BUYER`** (ผู้ซื้อ)
+  * มีฟิลด์ `role` เพื่อแยกสิทธิ์การใช้งานระหว่าง **`SELLER`** (ผู้ขาย) และ **`BUYER`** (ผู้ซื้อ)
 * **`products` (ข้อมูลสินค้า)**
   * เก็บชื่อสินค้า, รายละเอียด, ราคา, รูปภาพ และจำนวนสินค้าที่มีอยู่ในคลัง (`quantity`)
   * มีความสัมพันธ์แบบ **One-to-Many** กับตาราง `users` (`seller_id` -> `users.id`) เนื่องจากผู้ขาย (Seller) หนึ่งคนสามารถลงขายสินค้าได้หลายชิ้น
 
 #### 🛒 ระบบตะกร้าสินค้า (Cart Management)
 * **`carts` (ตะกร้าพักสินค้า)**
-  * เป็นตะกร้าสำหรับผู้ซื้อในการเลือกหยิบสินค้า
-  * มีความสัมพันธ์แบบ **One-to-One** กับตาราง `users` (`buyer_id` -> `users.id`) ซึ่งหมายความว่าผู้ซื้อ 1 คน จะมีตะกร้าสินค้าที่กำลังใช้งานอยู่ได้สูงสุดเพียง 1 ตะกร้าในเวลาเดียวกัน
+  * ตะกร้าสำหรับผู้ซื้อในการเลือกหยิบสินค้า
+  * มีความสัมพันธ์แบบ **One-to-One** กับตาราง `users` (`buyer_id` -> `users.id`) เพื่อบังคับให้ผู้ซื้อ 1 คนมีตะกร้าสินค้าที่กำลังใช้งานอยู่ได้สูงสุดเพียง 1 ตะกร้า ณ เวลาเดียวกัน
 * **`cart_items` (รายการสินค้าในตะกร้า)**
   * เก็บรายละเอียดว่าในตะกร้านั้น ๆ มีสินค้าชิ้นไหนบ้าง (`product_id`) และมีจำนวนเท่าใด (`quantity`)
-  * เชื่อมโยงกับตาราง `carts` (ความสัมพันธ์แบบ Many-to-One) และตาราง `products` (ความสัมพันธ์แบบ Many-to-One)
+  * เชื่อมโยงกับตาราง `carts` (Many-to-One) และตาราง `products` (Many-to-One)
 
 #### 📦 ระบบสั่งซื้อและตัดสต็อก (Order & Inventory Management)
 * **`orders` (คำสั่งซื้อหลัก)**
-  * บันทึกหลังจากผู้ซื้อกดยืนยันการสั่งซื้อ (Checkout)
-  * เก็บข้อมูลผู้ซื้อ (`buyer_id`), ราคารวมของคำสั่งซื้อ (`total_price`), สถานะการสั่งซื้อ (`status` เช่น `PENDING`, `COMPLETED`), และเวลาที่สั่งซื้อ
+  * บันทึกข้อมูลหลังจากผู้ซื้อทำการยืนยันสั่งซื้อสินค้า (Checkout)
+  * เก็บข้อมูลผู้ซื้อ (`buyer_id`), ราคารวมของคำสั่งซื้อ (`total_price`), สถานะคำสั่งซื้อ (`status` เช่น `PENDING`, `COMPLETED`), และเวลาที่ทำรายการ
 * **`order_items` (รายการสินค้าในคำสั่งซื้อ)**
-  * **จุดสำคัญเพื่อป้องกันข้อมูลเพี้ยน (Snapshot Price):** ตารางนี้เก็บ `unit_price` ณ ขณะสั่งซื้อ เพื่อบันทึกราคาประวัติสินค้าไว้ หากในอนาคตผู้ขายมีการแก้ไขราคาสินค้า ยอดรวมและบิลการสั่งซื้อย้อนหลังจะยังคงมีราคาตรงตามที่จ่ายจริง
-  * เชื่อมโยงกับตาราง `orders` และ `products` เพื่อระบุว่าในคำสั่งซื้อนั้นประกอบด้วยสินค้าชิ้นไหน จำนวนเท่าใด
+  * **Snapshot Price (`unit_price`):** เก็บราคา ณ วันที่สั่งซื้อจริง เพื่อป้องกันปัญหาประวัติยอดรวมออเดอร์เพี้ยน หากผู้ขายมีการแก้ไขราคาสินค้าในภายหลัง
+  * เชื่อมโยงกับตาราง `orders` และ `products` เพื่อระบุรายละเอียดของสินค้าในออเดอร์นั้นๆ
 
 ---
 
-## 🛠️ สถาปัตยกรรมและเทคโนโลยีที่ใช้ (Tech Stack)
+## Tech Stack
 
 * **Backend:** Django REST Framework (Python 3.10)
 * **Frontend:** React + TypeScript + Vite (Tailwind CSS v4 & shadcn/ui)
@@ -107,24 +107,24 @@ Table order_items {
 
 ---
 
-## 🚀 วิธีการติดตั้งและรันระบบ (Setup & Running the Project)
+## Setup & Installation
 
-### 📋 สิ่งที่ต้องเตรียมก่อนเริ่มใช้งาน (Prerequisites)
+### Prerequisites
 * ติดตั้ง **Docker Desktop** ในเครื่องคอมพิวเตอร์ของคุณให้เรียบร้อย
-* **สำคัญ:** โปรดเปิดโปรแกรม **Docker Desktop** ทิ้งไว้เพื่อให้ Docker Engine ทำงานอยู่เบื้องหลังก่อนเริ่มพิมพ์คำสั่งในขั้นตอนถัดไป
+* **สำคัญ:** ตรวจสอบให้มั่นใจว่าโปรแกรม **Docker Desktop** เปิดทำงานอยู่ก่อนเริ่มรันคำสั่งด้านล่าง
 
-### 1. การเตรียมระบบและเริ่มทำงานผ่าน Docker
-รันคำสั่งด้านล่างนี้เพื่อสร้างอิมเมจและรันเซิร์ฟเวอร์ทุกตู้อัตโนมัติ (Database, Backend, Frontend):
+### 1. Run Services with Docker Compose
+รันคำสั่งด้านล่างนี้เพื่อดาวน์โหลด อิมเมจ และเริ่มทำงานเซิร์ฟเวอร์ทั้งหมด (Database, Backend, Frontend):
 ```bash
 docker-compose up --build
 ```
 ระบบจะเปิดพอร์ตการใช้งานดังนี้:
-* **Frontend:** [http://localhost:5173](http://localhost:5173) (หน้าตาเว็บ React App)
+* **Frontend:** [http://localhost:5173](http://localhost:5173) (หน้าเว็บ React App)
 * **Backend:** [http://localhost:8000](http://localhost:8000) (หน้า Django REST Framework API)
 * **Database:** `localhost:5432` (PostgreSQL)
 
-#### 🗄️ การเชื่อมต่อฐานข้อมูลผ่านเครื่องมือภายนอก (Navicat, DBeaver, pgAdmin)
-คุณสามารถใช้เครื่องมือ GUI สำหรับจัดการฐานข้อมูลเชื่อมต่อเข้ามาที่ PostgreSQL Container ได้โดยตรงผ่านการตั้งค่าดังนี้:
+#### Connection via GUI Client (DBeaver, Navicat, pgAdmin)
+เชื่อมต่อเข้าสู่ PostgreSQL Container ผ่าน Database GUI Tool ด้วยค่าคอนฟิกดังนี้:
 * **Connection Type / DBMS:** `PostgreSQL`
 * **Host / IP Address:** `localhost` (หรือ `127.0.0.1`)
 * **Port:** `5432`
@@ -134,35 +134,35 @@ docker-compose up --build
 
 ---
 
-### 2. การสร้างตารางและการนำเข้าข้อมูลทดสอบ (Migration & Seeding Database)
-เมื่อตู้คอนเทนเนอร์ทำงานแล้ว ให้ทำตามขั้นตอนดังนี้เพื่อทำตารางฐานข้อมูลและใส่ข้อมูลเริ่มต้น:
+### 2. Database Migrations & Seeding
+รันคำสั่งเหล่านี้เพื่อจัดการโครงสร้างฐานข้อมูลและเพิ่มข้อมูลเริ่มต้น:
 
 1. **รัน Migration ของ Django:**
 ```bash
 docker-compose exec backend python manage.py migrate
 ```
 
-2. **รันคำสั่ง Seed Data เพื่อใส่ผู้ใช้งานและรายการสินค้าเริ่มต้น:**
+2. **นำเข้าข้อมูลทดสอบและผู้ใช้งานเริ่มต้น (Seed Database):**
 ```bash
 docker-compose exec backend python manage.py seed_db
 ```
 
 ---
 
-### 3. บัญชีผู้ใช้สำหรับทดสอบระบบ (Test Accounts)
-หลังรันคำสั่ง Seed แล้ว สามารถเข้าระบบเพื่อทดสอบสิทธิ์การใช้งานผ่านหน้าเว็บได้ทันทีด้วยบัญชีดังนี้:
+### 3. Test Accounts
+หลังรันคำสั่ง Seed เรียบร้อยแล้ว สามารถเข้าระบบผ่านหน้าเว็บด้วยบัญชีทดสอบดังนี้:
 
 | Username | Password | Role | รายละเอียดสิทธิ์ |
 |---|---|---|---|
-| `buyer1` | `password123` | `BUYER` (ผู้ซื้อ) | สามารถเลือกซื้อสินค้า, เพิ่มสินค้าลงตะกร้า, อัปเดตตะกร้า และสร้างใบสั่งซื้อได้ |
-| `seller1` | `password123` | `SELLER` (ผู้ขาย) | สามารถเพิ่ม ลบ และอัปเดตรายละเอียดสินค้าของตนเอง และดูประวัติรายการสั่งซื้อที่มีสินค้าของตนเองได้ |
-| `seller2` | `password123` | `SELLER` (ผู้ขาย) | สามารถแก้ไขข้อมูลสินค้าของตนเอง (ไม่สามารถแก้ไขสินค้าของ `seller1` ได้) |
+| `buyer1` | `password123` | `BUYER` | ค้นหา/กรองสินค้า, จัดการตะกร้าสินค้า และสร้างคำสั่งซื้อ (Checkout) |
+| `seller1` | `password123` | `SELLER` | เพิ่ม แก้ไข ลบสินค้าของตนเอง และดูรายการออเดอร์ของสินค้าตนเอง |
+| `seller2` | `password123` | `SELLER` | จัดการสินค้าของตนเอง (ไม่สามารถแก้ไขสินค้าของ `seller1` ได้) |
 
 ---
 
-### 🧪 การรันแบบทดสอบ (Running Tests)
+### Running Tests
 
-**1. รัน Unit Tests ในฝั่ง Django API (มีทั้งหมด 19 เคสเพื่อเช็กความถูกต้อง):**
+**1. รัน Unit Tests ในฝั่ง Django API (มีทั้งหมด 23 เคสเพื่อตรวจเช็กความถูกต้อง):**
 ```bash
 docker-compose exec backend python manage.py test
 ```
@@ -172,3 +172,10 @@ docker-compose exec backend python manage.py test
 docker-compose exec frontend npm run build
 ```
 
+---
+
+## Git Branching Strategy
+โปรเจกต์นี้เลือกใช้รูปแบบการแบ่งกิ่ง Git แบบ **Feature Branching** เพื่อความเป็นระเบียบและความปลอดภัยในการผสานรวมโค้ด:
+* **`main` / `master`**: กิ่งหลักที่เก็บโค้ดรุ่นที่เสถียรที่สุด (Production-ready) ที่ได้รับการทดสอบและรันผ่าน CI Pipeline เรียบร้อยแล้ว
+* **`develop`**: กิ่งรวบรวมฟีเจอร์และอัปเดตต่างๆ ก่อนที่จะทดสอบขั้นสุดท้ายเพื่อรวมเข้าสู่กิ่งหลัก
+* **`feature/*`**: กิ่งที่แตกแขนงออกไปสำหรับพัฒนาฟีเจอร์ย่อย (เช่น `feature/auth`, `feature/cart`, `feature/ci-cd`) เมื่อฟีเจอร์เสร็จสมบูรณ์และผ่านการทำ Unit Test จะทำการสร้าง Pull Request เพื่อตรวจเช็กคุณภาพก่อนรวมเข้าสู่กิ่งหลัก

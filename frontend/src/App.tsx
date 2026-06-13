@@ -10,7 +10,7 @@ import { CartDrawer } from "./components/pages/CartDrawer"
 import { SellerProducts } from "./components/pages/SellerProducts"
 import { OrderHistory } from "./components/pages/OrderHistory"
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 const getImageUrl = (url: string | null | undefined) => {
   if (!url) {
