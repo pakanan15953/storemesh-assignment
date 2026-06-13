@@ -16,8 +16,11 @@ services:
   # ตู้ที่ 2: Django Backend
   backend:
     build: ./backend
-    # สั่งรันเซิร์ฟเวอร์ Django ผูกกับ Port 8000
-    command: python manage.py runserver 0.0.0.0:8000
+    # สั่งรัน migrate และ seed ข้อมูลอัตโนมัติเมื่อเปิดตู้ จากนั้นรันเซิร์ฟเวอร์ Django
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_db &&
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
     ports:
