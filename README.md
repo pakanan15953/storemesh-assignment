@@ -113,6 +113,16 @@ Table order_items {
 
 ---
 
+## Key Features & DevOps (ฟีเจอร์เด่นและระบบความปลอดภัย)
+
+* **GitHub Actions CI Pipeline:** ตรวจสอบความถูกต้องของซอร์สโค้ดอัตโนมัติ (รัน Django Unit Tests 23 เคส, รัน ESLint และ build เช็กระบบฝั่ง React) ทุกครั้งที่มีการ push หรือ pull request ไปยังกิ่ง `main`/`master`
+* **Role-Based API Security:** กำหนดสิทธิ์ผู้ใช้งานแยกขาดชัดเจน (ผู้ขาย/SELLER จัดการได้เฉพาะสินค้าของตนเอง, ผู้ซื้อ/BUYER จัดการตะกร้าและสั่งซื้อสินค้าได้เท่านั้น)
+* **Vite WSL2/Docker Hot-Reloading:** ใช้ระบบ Polling ใน `vite.config.ts` เพื่อแก้ปัญหาการไม่รีเฟรชหน้าจอจากการ mount โวลุ่มในระบบปฏิบัติการ Windows
+* **E-Receipt & Order History:** ระบบตรวจสอบประวัติคำสั่งซื้อแยกตามสถานะ และออกใบเสร็จดิจิทัลจำลองที่จัดฟอร์แมตสำหรับสั่งพิมพ์หรือบันทึกเป็น PDF ได้ทันที
+* **Dynamic Image Normalization:** ระบบประมวลผล Path รูปภาพอัจฉริยะ รองรับทั้งไฟล์อัปโหลดในระบบและลิงก์จากภายนอก (External Image Links)
+
+---
+
 ## Tech Stack
 
 * **Backend:** Django REST Framework (Python 3.10)
