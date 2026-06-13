@@ -43,12 +43,16 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    items = CartItemSerializer(many=True, read_only=True)
+    items = serializers.SerializerMethodField()
     buyer = serializers.CharField(source='buyer.username', read_only=True)
 
     class Meta:
         model = Cart
         fields = ('id', 'buyer', 'items', 'created_at')
+
+    def get_items(self, obj):
+        ordered_items = obj.items.all().order_by('id')
+        return CartItemSerializer(ordered_items, many=True, context=self.context).data
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
