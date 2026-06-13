@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-q7@a@#=*hlm()_s#5&jf%i#+trhj^p^jozm%rujays!be7j-oc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -136,12 +136,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# อนุญาตให้ Frontend (Vite) เข้าถึง API ได้
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.0:5173",
-]
+# อนุญาตให้ Frontend เข้าถึง API ได้อย่างยืดหยุ่นในโหมด Development
+CORS_ALLOW_ALL_ORIGINS = True
 
 # ตั้งค่าให้ REST Framework ใช้ JWT เป็นตัวตรวจสอบสิทธิ์ และใช้ drf-spectacular สำหรับ OpenAPI Schema
 REST_FRAMEWORK = {

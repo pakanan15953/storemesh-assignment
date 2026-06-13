@@ -486,6 +486,7 @@ function App() {
             user={user}
             getImageUrl={getImageUrl}
             formatPrice={formatPrice}
+            onAddToCart={handleAddToCart}
           />
         )}
       </main>
@@ -501,19 +502,82 @@ function App() {
       />
 
       {/* ── Footer ── */}
-      <footer className="mt-auto border-t border-neutral-100 bg-neutral-50/50 py-8 text-center">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col items-center justify-center gap-3">
-          <div className="flex items-center gap-2.5">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#863bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <path d="M16 10a4 4 0 0 1-8 0"></path>
-            </svg>
-            <span className="font-semibold text-sm tracking-tight text-neutral-900">StoreMesh</span>
+      <footer className="mt-auto border-t border-neutral-100 bg-neutral-50/50 py-12 text-left text-neutral-600">
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+          
+          {/* Brand Info & Socials */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#863bff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              <span className="font-serif font-medium text-xl tracking-wider text-neutral-900 uppercase">StoreMesh</span>
+            </div>
+            <p className="text-xs text-neutral-400 leading-relaxed font-sans">
+              Online premium gaming gear store founded in 2026. StoreMesh focuses on selling only quality and branded items, connecting sellers and buyers.
+            </p>
+            {/* Social Icons Mockup (Circular Black Background) */}
+            <div className="flex items-center gap-2 pt-2">
+              <a href="#" className="w-7 h-7 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-[#863bff] transition-colors" aria-label="Facebook">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-3.5 h-3.5 fill-current">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                </svg>
+              </a>
+              <a href="#" className="w-7 h-7 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-[#863bff] transition-colors" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-3.5 h-3.5">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+              </a>
+              <a href="#" className="w-7 h-7 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-[#863bff] transition-colors" aria-label="Twitter">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-3.5 h-3.5 fill-current">
+                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                </svg>
+              </a>
+            </div>
           </div>
-          <p className="text-xs text-neutral-400">
-            © {new Date().getFullYear()} Digital Storemesh Co., Ltd. Technical Assignment. All rights reserved.
-          </p>
+
+          {/* Navigation Links */}
+          <div className="font-sans">
+            <h4 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-4">Navigation</h4>
+            <ul className="space-y-3 text-xs text-neutral-500 font-medium">
+              <li><button onClick={() => setCurrentView('catalog')} className="hover:text-[#863bff] transition-colors cursor-pointer text-left uppercase">Catalog</button></li>
+              <li><button onClick={() => { if (user?.role === 'BUYER') setCurrentView('cart'); else setCurrentView('login'); }} className="hover:text-[#863bff] transition-colors cursor-pointer text-left uppercase">Shopping Cart</button></li>
+              <li><button onClick={() => { if (user) setCurrentView('orders'); else setCurrentView('login'); }} className="hover:text-[#863bff] transition-colors cursor-pointer text-left uppercase">Order History</button></li>
+            </ul>
+          </div>
+
+          {/* Customers Links */}
+          <div className="font-sans">
+            <h4 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-4">Customers</h4>
+            <ul className="space-y-3 text-xs text-neutral-500 font-medium uppercase">
+              <li><a href="#" className="hover:text-[#863bff] transition-colors">Promotions</a></li>
+              <li><a href="#" className="hover:text-[#863bff] transition-colors">Delivery</a></li>
+              <li><a href="#" className="hover:text-[#863bff] transition-colors">Payment</a></li>
+              <li><a href="#" className="hover:text-[#863bff] transition-colors">Gift Card</a></li>
+            </ul>
+          </div>
+
+          {/* About Links */}
+          <div className="font-sans">
+            <h4 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-4">About</h4>
+            <ul className="space-y-3 text-xs text-neutral-500 font-medium uppercase">
+              <li><a href="#" className="hover:text-[#863bff] transition-colors">News</a></li>
+              <li><a href="#" className="hover:text-[#863bff] transition-colors">Public Offer</a></li>
+              <li><a href="#" className="hover:text-[#863bff] transition-colors">User Agreement</a></li>
+              <li><a href="#" className="hover:text-[#863bff] transition-colors">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+        </div>
+
+        {/* Copyright divider */}
+        <div className="max-w-6xl mx-auto px-6 mt-8 pt-6 border-t border-neutral-100/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400">
+          <p>© {new Date().getFullYear()} Digital Storemesh Co., Ltd. Technical Assignment.</p>
+          <p>All rights reserved.</p>
         </div>
       </footer>
     </div>
