@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -33,8 +33,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   getImageUrl,
   formatPrice
 }) => {
+  const [sortBy, setSortBy] = useState('default')
+
   const getFilteredProducts = () => {
-    return products.filter((p) => {
+    let result = products.filter((p) => {
       const matchSearch =
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.description?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -46,6 +48,17 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
       return matchSearch && matchPrice
     })
+
+    // Apply sorting
+    if (sortBy === 'price-asc') {
+      result = [...result].sort((a, b) => a.price - b.price)
+    } else if (sortBy === 'price-desc') {
+      result = [...result].sort((a, b) => b.price - a.price)
+    } else if (sortBy === 'newest') {
+      result = [...result].sort((a, b) => b.id - a.id)
+    }
+
+    return result
   }
 
   const filtered = getFilteredProducts()
@@ -58,7 +71,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           <h1 className="text-2xl font-semibold tracking-tight">Products</h1>
           <p className="text-neutral-500 text-sm mt-1">Browse all available items</p>
         </div>
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <div className="relative flex-grow md:flex-grow-0 md:min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
             <Input
@@ -78,6 +91,16 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             <option value="under-1000">Under ฿1,000</option>
             <option value="1000-3000">฿1,000 – ฿3,000</option>
             <option value="over-3000">Over ฿3,000</option>
+          </select>
+          <select
+            className="h-9 px-3 bg-white border border-neutral-200 rounded-md text-neutral-600 text-sm outline-none focus:border-neutral-400 cursor-pointer"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="default">Default</option>
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
           </select>
         </div>
       </div>
@@ -100,8 +123,22 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 border border-dashed border-neutral-200 rounded-lg">
+        <div className="text-center py-20 border border-dashed border-neutral-200 rounded-lg space-y-3">
           <p className="text-neutral-400">No products found.</p>
+          {(searchQuery || priceFilter !== 'all' || sortBy !== 'default') && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-neutral-200 text-sm cursor-pointer"
+              onClick={() => {
+                setSearchQuery('')
+                setPriceFilter('all')
+                setSortBy('default')
+              }}
+            >
+              Clear filters
+            </Button>
+          )}
         </div>
       ) : (
         <div className="grid-products">

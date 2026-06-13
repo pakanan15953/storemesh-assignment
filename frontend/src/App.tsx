@@ -19,13 +19,36 @@ const getImageUrl = (url: string | null | undefined) => {
 
   // Handle case where Django ImageField prefixes seeded external URLs with /media/ (e.g. /media/https://...)
   let cleanUrl = url
-  if (url.includes('http://') || url.includes('https://')) {
-    const httpIndex = url.indexOf('http://')
-    const httpsIndex = url.indexOf('https://')
+  try {
+    cleanUrl = decodeURIComponent(url)
+  } catch (e) {
+    // fallback
+  }
+
+  // Check for http:/ or https:/ (even with a single slash due to Django path normalization)
+  if (cleanUrl.includes('http:/') || cleanUrl.includes('https:/')) {
+    const httpIndex = cleanUrl.indexOf('http:/')
+    const httpsIndex = cleanUrl.indexOf('https:/')
+    let index = -1
+    let isHttps = false
+
     if (httpIndex !== -1 && (httpsIndex === -1 || httpIndex < httpsIndex)) {
-      cleanUrl = url.substring(httpIndex)
+      index = httpIndex
+      isHttps = false
     } else if (httpsIndex !== -1) {
-      cleanUrl = url.substring(httpsIndex)
+      index = httpsIndex
+      isHttps = true
+    }
+
+    if (index !== -1) {
+      let extracted = cleanUrl.substring(index)
+      // Normalize single slash to double slash if needed
+      if (isHttps && !extracted.startsWith('https://')) {
+        extracted = extracted.replace('https:/', 'https://')
+      } else if (!isHttps && !extracted.startsWith('http://')) {
+        extracted = extracted.replace('http:/', 'http://')
+      }
+      return extracted
     }
   }
 
@@ -478,9 +501,19 @@ function App() {
       />
 
       {/* ── Footer ── */}
-      <footer className="mt-auto border-t border-neutral-100 py-6 text-center">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="text-xs text-neutral-400">© {new Date().getFullYear()} StoreMesh</p>
+      <footer className="mt-auto border-t border-neutral-100 bg-neutral-50/50 py-8 text-center">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col items-center justify-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#863bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span className="font-semibold text-sm tracking-tight text-neutral-900">StoreMesh</span>
+          </div>
+          <p className="text-xs text-neutral-400">
+            © {new Date().getFullYear()} Digital Storemesh Co., Ltd. Technical Assignment. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>
