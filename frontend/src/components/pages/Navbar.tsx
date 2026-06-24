@@ -31,7 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <path d="M16 10a4 4 0 0 1-8 0"></path>
           </svg>
-          <span className="font-serif font-medium text-lg tracking-wider text-neutral-900 uppercase">StoreMesh</span>
+          <span className="font-serif font-medium text-lg tracking-wider text-neutral-900 uppercase">StoreMesh </span>
         </button>
 
         {/* Nav (General Page Links) */}
